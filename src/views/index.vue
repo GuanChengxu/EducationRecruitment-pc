@@ -103,9 +103,7 @@
         this.getData();
       },
       gotoLink(row){
-        if(row.applyStatus == 1){
-          this.$router.push({path:'/agreement',query:{key:row.applyId}})
-        }
+        this.$router.push({path:'/agreement',query:{key:row.applyId}})
       },
       //时间类型转化
       changeTimeFormat(row){
@@ -200,6 +198,7 @@
           display: -webkit-box;
           -webkit-line-clamp: 1;
           -webkit-box-orient: vertical;
+          cursor: pointer;
         }
         .black_time{
           display: block;
@@ -225,6 +224,7 @@
           font-weight:400;
           color:rgba(51,51,51,1);
           line-height:24px;
+          cursor: pointer;
         }
       }
     }

@@ -127,6 +127,14 @@ export function validateEmpty(keyVal) {
     return true
   }
 }
+//时间判断空
+export function validateEmpty2(keyVal) {
+  if(keyVal == undefined || keyVal=="" || keyVal==null){
+    return false
+  }else{
+    return true
+  }
+}
 //判断姓名
 export function validateName(str) {
   var reg = /^([\u4e00-\u9fa5]|[a-zA-Z]| |•|-|‧|•|⋅|ㆍ|・|●|(\（+\）)|(\（[\u4e00-\u9fa5]+\）)|(\（[a-zA-Z]+\）))+$/;

@@ -115,9 +115,43 @@
                       <input class="fl" type="text" v-model="userInfo.identifier.text" @blur="inputJudge('identifier')">
                       <span v-show="userInfo.identifier.error" class="error_box">*{{userInfo.identifier.errorText}}</span>
                     </div>
+                  </div>
+                  <div class="right fl">
+                    <FileUpload
+                      class="avatar-uploader"
+                      :maximum="1"
+                      :multiple="false"
+                      @input-file="beforeAvatarUpload"
+                  　　 >
+                      <img v-if="imageUrl" :src="'https://ystwx.yantai.gov.cn/jneduapi2'+imageUrl" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </FileUpload>
+                    <h1>近期正面一寸照片</h1>
+                    <p>
+                      *尺寸为2.5x3.5cm,大小300K以内
+                    </p>
+                  </div>
+                </div>
+                <div class="ft_bottom">
+                  <div class="clearfix">
+                    <div class="date_box clearfix fl">
+                      <span class="label fl">毕业年份</span>
+                      <i v-show="!userInfo.graduationTime.text" v-bind:class="is_active?'el-select__caret el-input__icon el-icon-arrow-up is_active':'el-select__caret el-input__icon el-icon-arrow-up'"></i>
+                      <el-date-picker
+                        v-bind:class="userInfo.graduationTime.text?'ts9 fl':'ts9 fl noxl'"
+                        v-model="userInfo.graduationTime.text"
+                        type="year"
+                        :picker-options="pickerOptions1"
+                        @focus="changeIsActive(true)"
+                        @blur="changeIsActive(false)"
+                        @change="inputJudge('graduationTime')"
+                        placeholder="请选择毕业年份">
+                      </el-date-picker>
+                      <span v-show="userInfo.graduationTime.error" class="error_box">*{{userInfo.graduationTime.errorText}}</span>
+                    </div>
                     <div class="select_box clearfix fl">
                       <span class="label fl">最高学位</span>
-                      <el-select popper-class="ts5" value-key="id" class="ts6" v-model="eduDegreeSelect.selected" @change="inputJudge('eduDegree')" placeholder="请选择您的最高学位">
+                      <el-select popper-class="ts5" value-key="id" class="ts10" v-model="eduDegreeSelect.selected" @change="inputJudge('eduDegree')" placeholder="请选择最高学位">
                         <el-option
                           v-for="item in eduDegreeData"
                           :key="item.id"
@@ -127,9 +161,9 @@
                       </el-select>
                       <span v-show="eduDegreeSelect.error" class="error_box">*{{eduDegreeSelect.errorText}}</span>
                     </div>
-                    <div class="select_box clearfix fl" style="margin-left: 24px;margin-right: 0px;">
+                    <div class="select_box clearfix fl" style="margin-right: 0px;">
                       <span class="label fl">最高学历</span>
-                      <el-select popper-class="ts5" value-key="id" class="ts6" v-model="educationSelect.selected" @change="choseEducation()" placeholder="请选择您的最高学历">
+                      <el-select popper-class="ts5" value-key="id" class="ts10" v-model="educationSelect.selected" @change="choseEducation()" placeholder="请选择最高学历">
                         <el-option
                           v-for="item in educationData"
                           :key="item.id"
@@ -140,23 +174,6 @@
                       <span v-show="educationSelect.error" class="error_box">*{{educationSelect.errorText}}</span>
                     </div>
                   </div>
-                  <div class="right fl">
-                    <FileUpload
-                      class="avatar-uploader"
-                      :maximum="1"
-                      :multiple="false"
-                      @input-file="beforeAvatarUpload"
-                  　　 >
-                      <img v-if="imageUrl" :src="'http://154.8.201.198:8081'+imageUrl" class="avatar">
-                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </FileUpload>
-                    <h1>近期正面一寸照片</h1>
-                    <p>
-                      *尺寸为2.5x3.5cm,大小300K以内
-                    </p>
-                  </div>
-                </div>
-                <div class="ft_bottom">
                   <div class="education_box clearfix" v-for="(item,index) in nEducationSelect">
                     <div class="input_box1 fl clearfix">
                       <span class="label fl">{{item.type}}院校</span>
@@ -293,17 +310,23 @@
   import {saveTeacherInfo,saveSocialResume,applyTeacher,queryRecruitmentSchool,queryRecruitmentJob,avatar} from '@/api/startSignUp.js'
   import {recruitmentById} from '@/api/detail.js'
   import {startApplyOrQuery} from '@/api/agreement.js'
-  import {validateEmpty,validateName,validatePhoneNumber,validateEmail,IdentityCodeValid,validateNation} from '@/utils/index.js'
+  import {validateEmpty,validateName,validatePhoneNumber,validateEmail,IdentityCodeValid,validateNation,validateEmpty2} from '@/utils/index.js'
   import FileUpload from "vue-upload-component"
   import vueCropper from "@/components/vue-cropper/vue-cropper.vue"
   export default {
     data() {
         return {
+          is_active:false,
           btn1NOclick:false,
           btn2NOclick:false,
           btn3NOclick:false,
           btn4NOclick:false,
           pickerOptions0: {
+            disabledDate(time) {
+              return time.getTime() > Date.now() - 8.64e6
+            }
+          },
+          pickerOptions1: {
             disabledDate(time) {
               return time.getTime() > Date.now() - 8.64e6
             }
@@ -471,6 +494,12 @@
             errorText:'',
           }],//家庭成员
           userInfo:{
+            graduationTime:{
+              text:null,
+              error:false,
+              errorText:null,
+              isdisabled:false
+            },
             name:{
               text:null,
               error:false,
@@ -661,6 +690,9 @@
                         name:'预备党员'
                       }
                     }
+                    var time = new Date();
+                    time.setFullYear(res.data.data.graduateTime,0,1);
+                    this.userInfo.graduationTime.text = time;
                     this.userInfo.type.text = res.data.data.certificationInfo.kind;
                     this.userInfo.identifier.text = res.data.data.certificationInfo.serialNumber;
                     this.certificationId = res.data.data.certificationInfo.certificationId;
@@ -829,6 +861,10 @@
     mounted() {
     },
     methods: {
+      //改变箭头样式
+      changeIsActive(data){
+        this.is_active = data;
+      },
       //第三步跳第二个
       changeStepTwo(){
         if(this.stepData == 3){
@@ -1084,7 +1120,7 @@
               this.workplaceErrorText = '请填写先工作单位,没有请填写无'
               this.workplaceError = true
             }else {
-              this.workplaceErrorText = 'null'
+              this.workplaceErrorText = null
               this.workplaceError = false
             }
           case 'remark':
@@ -1092,8 +1128,16 @@
               this.remarkErrorText = '请填写备注,没有请填写无'
               this.remarkError = true
             }else {
-              this.remarkErrorText = 'null'
+              this.remarkErrorText = null
               this.remarkError = false
+            }
+          case 'graduationTime':
+            if(!validateEmpty2(this.userInfo.graduationTime.text)){
+              this.userInfo.graduationTime.errorText = '请选择毕业年份'
+              this.userInfo.graduationTime.error = true
+            }else {
+              this.userInfo.graduationTime.errorText = null
+              this.userInfo.graduationTime.error = false
             }
           default:
             break;
@@ -1355,6 +1399,11 @@
           this.userInfo.identifier.error = true
           postData = false;
         }
+        if(!validateEmpty2(this.userInfo.graduationTime.text)){
+          this.userInfo.graduationTime.errorText = '请选择毕业年份'
+          this.userInfo.graduationTime.error = true
+          postData = false;
+        }
         if(!validateEmpty(this.educationSelect.selected.name)){
           this.educationSelect.errorText = '请选择最高学历'
           this.educationSelect.error = true
@@ -1405,6 +1454,7 @@
           data.certificationInfo.kind=this.userInfo.type.text;
           data.certificationInfo.serialNumber=this.userInfo.identifier.text
           data.certificationInfo.highestEducation=this.educationSelect.selected.name
+          data.graduateTime=new Date(this.userInfo.graduationTime.text).getFullYear();
           this.jobData.forEach((v,i)=>{
             if(v.unitId == this.choseStation[0]){
               v.children.forEach((v1,i1)=>{
@@ -2004,6 +2054,75 @@
               }
             }
             .ft_bottom{
+              .select_box{
+                position: relative;
+                margin-right: 22px;
+                margin-bottom: 15px;
+                .label{
+                  width: 81px;
+                  height: 30px;
+                  line-height: 30px;
+                  font-size:16px;
+                  font-weight:400;
+                  color:rgba(102,102,102,1);
+                }
+                .error_box{
+                  position: absolute;
+                  width: 165px;
+                  height: 15px;
+                  left: 81px;
+                  top: 100%;
+                  font-size:12px;
+                  font-weight:400;
+                  color:rgba(255,51,51,1);
+                  line-height: 15px;
+                }
+              }
+              .date_box{
+                position: relative;
+                margin-right: 22px;
+                margin-bottom: 15px;
+                .el-select__caret{
+                  position: absolute;
+                  right: 0;
+                  top: 0px;
+                  color: #C0C4CC;
+                  font-size: 14px;
+                  line-height: 30px;
+                  -webkit-transition: -webkit-transform .3s;
+                  transition: -webkit-transform .3s;
+                  transition: transform .3s;
+                  transition: transform .3s, -webkit-transform .3s;
+                  transition: transform .3s,-webkit-transform .3s;
+                  -webkit-transform: rotateZ(180deg);
+                  transform: rotateZ(180deg);
+                  cursor: pointer;
+                  z-index: 1;
+                  &.is_active{
+                    -webkit-transform: rotateZ(0);
+                    transform: rotateZ(0);
+                  }
+                }
+                .label{
+                  width: 81px;
+                  height: 30px;
+                  line-height: 30px;
+                  font-size:16px;
+                  font-weight:400;
+                  color:rgba(102,102,102,1);
+                }
+                .error_box{
+                  position: absolute;
+                  width: 165px;
+                  height: 15px;
+                  left: 81px;
+                  top: 100%;
+                  font-size:12px;
+                  font-weight:400;
+                  color:rgba(255,51,51,1);
+                  line-height: 15px;
+                }
+              }
               .education_box{
                 position: relative;
                 .input_box1{

@@ -368,6 +368,54 @@ img {
     line-height: 30px;
   }
 }
+.ts10{
+  input {
+    width: 165px;
+    height: 30px;
+    border: 1px solid rgba(200, 205, 209, 1);
+    border-radius: 3px;
+    padding: 0px 5px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #333333;
+    line-height: 30px;
+  }
+
+  .el-input__icon {
+    line-height: 30px;
+  }
+}
+.ts9{
+  position: relative;
+  width: 165px !important;
+  z-index: 2;
+  input {
+    width: 165px;
+    height: 30px;
+    border: 1px solid rgba(200, 205, 209, 1);
+    border-radius: 3px;
+    padding: 0px 5px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #333333;
+    line-height: 30px;
+    background-color: transparent;
+  }
+  &.noxl {
+    .el-input__icon{
+      display: none;
+    }
+  }
+  .el-input__inner{
+    padding-left: 5px !important;
+  }
+  .el-input__prefix {
+    display: none;
+  }
+  .el-input__icon {
+    line-height: 30px;
+  }
+}
 
 .ts7 {
   input {

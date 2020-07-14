@@ -20,8 +20,8 @@
             <el-checkbox v-model="checked">我已认真阅读并同意</el-checkbox>
           </div>
           <div class="btn_box">
-            <button @click="startSignUp()">开始报名</button>
-            <div class="goto" @click="query()">已报名查询></div>
+            <button :class="status==1?'':'noclick'" @click="startSignUp()" v-show="btnName" :disabled="isClick">{{btnName}}</button>
+            <div :class="status==1 || status==2?'goto':'noclick2 goto'" @click="query()">已报名查询></div>
           </div>
         </div>
         <div class="success" v-if="resultData == 'success'">
@@ -222,7 +222,9 @@
         dayin:false,
         dayin2:false,
         bmData:null,
-        imgUrl:''
+        imgUrl:'',
+        isClick:true,
+        btnName:null
       }
     },
     created() {
@@ -233,6 +235,16 @@
           this.notice = result.data.data.applyNotice
           this.linkName = result.data.data.recruitTheme
           this.status = result.data.data.applyStatus
+          if(result.data.data.applyStatus == 0){
+            this.btnName = '未开始';
+            this.isClick = true;
+          }else if(result.data.data.applyStatus == 1){
+            this.btnName = '开始报名';
+            this.isClick = false;
+          }else if(result.data.data.applyStatus == 2){
+            this.btnName = '已结束';
+            this.isClick = true;
+          }
         }else {
           this.$message({
             message: result.data.msg,
@@ -310,7 +322,7 @@
           if(result.data.code == 200){
             if(result.data.data.queryStatus != 1){
               this.$message({
-                message: '该招聘还未到查询时间',
+                message: '该招聘不在查询时间之内',
                 type: 'error'
               });
             }else{
@@ -486,6 +498,9 @@
           font-weight:400;
           color:rgba(255,255,255,1);
         }
+        .noclick{
+          background:#d9d6d9;
+        }
         .goto{
           position: absolute;
           right: 0px;
@@ -494,6 +509,10 @@
           font-weight:400;
           color:rgba(79,121,255,1);
           cursor: pointer;
+        }
+        .noclick2{
+          pointer-events:none;
+          color: #d9d6d9;
         }
       }
     }
