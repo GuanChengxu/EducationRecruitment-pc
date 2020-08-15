@@ -1,3 +1,4 @@
+<script src="../../api/startSignUp.js"></script>
 <template>
     <div>
       <Header></Header>
@@ -195,6 +196,31 @@
                       </el-select>
                     </div>
                     <span v-show="item.error" class="error_box">*{{item.errorText}}</span>
+                  </div>
+                  <div class="pic_list">
+                    <div class="pic_tle clearfix">
+                      <span class="tle fl">上传证明材料</span>
+                      <span class="p fl">*（选填）请上传您的学历学位证书，教师资格证等证明材料</span>
+                    </div>
+                    <div class="clearfix">
+                      <div class="pic_box fl clearfix">
+                        <div class="img fl" v-for="(item,index) in picList" :key="index">
+                          <img class="close" @click="removePic(index)" src="@/assets/webx.png" alt="">
+                          <img class="pic" :src="'https://ystwx.yantai.gov.cn/jneduapi2'+item.url" alt="">
+                        </div>
+                        <div class="pic_upload fl" v-if="picList.length<6">
+                          <FileUpload
+                            class="uploader"
+                            :maximum="1"
+                            :multiple="false"
+                            input-id="file2"
+                            @input-file="beforePicUpload"
+                            　　 >
+                            <img src="@/assets/addpic.png" alt="">
+                          </FileUpload>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -416,10 +442,10 @@
             name:'本科'
           },{
             id:2,
-            name:'硕士'
+            name:'硕士研究生'
           },{
             id:3,
-            name:'博士'
+            name:'博士研究生'
           }],
           educationSelect:{
             selected:{
@@ -558,7 +584,9 @@
           remarkError:false,
           //用户信息
           userData:{},
-          highest:''
+          highest:'',
+          //证明资料
+          picList:[]
         }
     },
     async created() {
@@ -595,13 +623,13 @@
                     //岗位
                     var chosearrey=[];
                     chosearrey.push(res.data.data.unitId);
-                    chosearrey.push(res.data.data.subjectId);
+                    chosearrey.push(res.data.data.postId);
                     this.choseStation = chosearrey;
                     var job = {};
                     this.jobData.forEach((v,i)=>{
                       if(v.unitId == this.choseStation[0]){
                         v.children.forEach((v1,i1)=>{
-                          if(v1.subjectId == this.choseStation[1]){
+                          if(v1.jobId == this.choseStation[1]){
                             job = v1;
                           }
                         })
@@ -690,6 +718,9 @@
                         name:'预备党员'
                       }
                     }
+                    if(res.data.data.credentials && res.data.data.credentials.length>0){
+                      this.picList = res.data.data.credentials;
+                    }
                     var time = new Date();
                     time.setFullYear(res.data.data.graduateTime,0,1);
                     this.userInfo.graduationTime.text = time;
@@ -707,15 +738,15 @@
                         id:1,
                         name:'本科'
                       }
-                    }else if(res.data.data.certificationInfo.highestEducation == '硕士'){
+                    }else if(res.data.data.certificationInfo.highestEducation == '硕士研究生'){
                       this.educationSelect.selected={
                         id:2,
-                        name:'硕士'
+                        name:'硕士研究生'
                       }
-                    }else if(res.data.data.certificationInfo.highestEducation == '博士'){
+                    }else if(res.data.data.certificationInfo.highestEducation == '博士研究生'){
                       this.educationSelect.selected={
                         id:3,
-                        name:'博士'
+                        name:'博士研究生'
                       }
                     }
                     //博士
@@ -889,13 +920,13 @@
             this.jobData.forEach((v,i)=>{
               if(v.unitId == this.choseStation[0]){
                 v.children.forEach((v1,i1)=>{
-                  if(v1.subjectId == this.choseStation[1]){
+                  if(v1.jobId == this.choseStation[1]){
                     job = v1;
                   }
                 })
               }
             })
-            if((job.educationName == '本科' && this.educationSelect.selected.name == '专科')||(job.educationName == '硕士' && (this.educationSelect.selected.name == '专科' || this.educationSelect.selected.name == '本科'))||(job.educationName == '博士' && (this.educationSelect.selected.name == '专科' || this.educationSelect.selected.name == '本科' || this.educationSelect.selected.name == '硕士'))){
+            if((job.educationName == '本科' && this.educationSelect.selected.name == '专科')||(job.educationName == '硕士研究生' && (this.educationSelect.selected.name == '专科' || this.educationSelect.selected.name == '本科'))||(job.educationName == '博士研究生' && (this.educationSelect.selected.name == '专科' || this.educationSelect.selected.name == '本科' || this.educationSelect.selected.name == '硕士研究生'))){
               this.educationSelect = {
                 selected:{
                   id:null,
@@ -915,10 +946,10 @@
                 name:'本科'
               },{
                 id:2,
-                name:'硕士'
+                name:'硕士研究生'
               },{
                 id:3,
-                name:'博士'
+                name:'博士研究生'
               }];
             }else if(job.educationName == '专科'){
               this.educationData=[{
@@ -929,10 +960,10 @@
                 name:'本科'
               },{
                 id:2,
-                name:'硕士'
+                name:'硕士研究生'
               },{
                 id:3,
-                name:'博士'
+                name:'博士研究生'
               }];
             }else if(job.educationName == '本科'){
               this.educationData=[{
@@ -940,23 +971,23 @@
                 name:'本科'
               },{
                 id:2,
-                name:'硕士'
+                name:'硕士研究生'
               },{
                 id:3,
-                name:'博士'
+                name:'博士研究生'
               }];
-            }else if(job.educationName == '硕士'){
+            }else if(job.educationName == '硕士研究生'){
               this.educationData=[{
                 id:2,
-                name:'硕士'
+                name:'硕士研究生'
               },{
                 id:3,
-                name:'博士'
+                name:'博士研究生'
               }];
-            }else if(job.educationName == '博士'){
+            }else if(job.educationName == '博士研究生'){
               this.educationData=[{
                 id:3,
-                name:'博士'
+                name:'博士研究生'
               }];
             }
           }
@@ -974,7 +1005,7 @@
           this.jobData.forEach((v,i)=>{
             if(v.unitId == this.choseStation[0]){
               v.children.forEach((v1,i1)=>{
-                if(v1.subjectId == this.choseStation[1]){
+                if(v1.jobId == this.choseStation[1]){
                   job = v1;
                 }
               })
@@ -1178,7 +1209,7 @@
               name:null,
             }
           }];
-        }else if(this.educationSelect.selected.name == '硕士'){
+        }else if(this.educationSelect.selected.name == '硕士研究生'){
           this.nEducationSelect=[{
             id:3,
             type:'硕士',
@@ -1202,7 +1233,7 @@
               name:null,
             }
           }];
-        }else if(this.educationSelect.selected.name == '博士'){
+        }else if(this.educationSelect.selected.name == '博士研究生'){
           this.nEducationSelect=[{
             id:4,
             type:'博士',
@@ -1433,14 +1464,15 @@
         if(postData){
           this.btn1NOclick = true;
           var data = {
-            certificationInfo:{}
+            certificationInfo:{},
+            credentials:[]
           };
           data.teacherId=this.teacherId;
           data.userId=this.userData.uuid;
           data.recruitId=this.key;
           data.photo=this.imageUrl;
           data.unitId=this.choseStation[0];
-          data.subjectId=this.choseStation[1];
+          // data.subject=this.choseStation[1];
           data.name=this.userInfo.name.text;
           data.sex=this.sexSelect.selected.id;
           data.nation=this.userInfo.nation.text;
@@ -1458,7 +1490,7 @@
           this.jobData.forEach((v,i)=>{
             if(v.unitId == this.choseStation[0]){
               v.children.forEach((v1,i1)=>{
-                if(v.subjectId == this.choseStation[1]){
+                if(v.jobId == this.choseStation[1]){
                   data.postId=v1.jobId;
                 }
               })
@@ -1483,7 +1515,7 @@
                 }
               })
               break;
-            case '硕士':
+            case '硕士研究生':
               this.nEducationSelect.forEach((v,i)=>{
                 if(v.id == 2){
                   data.certificationInfo.bachelorAcademy=v.school
@@ -1497,7 +1529,7 @@
                 }
               })
               break;
-            case '博士':
+            case '博士研究生':
               this.nEducationSelect.forEach((v,i)=>{
                 if(v.id == 2){
                   data.certificationInfo.bachelorAcademy=v.school
@@ -1519,6 +1551,12 @@
             default:
               break;
           }
+          this.picList.forEach((v,i)=>{
+            data.credentials.push({
+              url:v.url,
+              teacherId:this.teacherId
+            })
+          })
           saveTeacherInfo(data).then(res=>{
             this.btn1NOclick = false;
             if(res.data.code == 200){
@@ -1644,7 +1682,6 @@
           }
         }
         if(savepd){
-          console.log('1')
           this.btn2NOclick = true;
           data.teacherId = this.teacherId;
           if(pddata){
@@ -1667,7 +1704,6 @@
                   message: '保存成功',
                   type: 'success'
                 });
-                console.log('2')
                 // this.$router.push('/')
               }else {
                 this.$message({
@@ -1701,6 +1737,38 @@
             };
           }
         }
+      },
+      //上传证明材料
+      beforePicUpload(newFile, oldFile, prevent){
+        const that = this;
+        if(newFile && !oldFile){
+          const isJPG = newFile.type === 'image/jpeg' || newFile.type === 'image/png' || newFile.type === 'image/jpeg';
+          const isLt3k = newFile.size / 1024 / 1024 < 20;
+          if (!isJPG) {
+            this.$message.error('上传头像图片只能是 jpg、jpeg和png 格式!');
+          }
+          if (!isLt3k) {
+            this.$message.error('上传头像图片大小不能超过 20M!');
+          }
+          if(isJPG && isLt3k){
+            var imgData = new FormData();
+            imgData.append('file',newFile.file)
+            avatar(imgData).then(res=>{
+              if(res.data.code == 200){
+                this.picList.push({url:res.data.imgUrl});
+              }else {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'error'
+                });
+              }
+            })
+          }
+        }
+      },
+      //删除上传证明材料
+      removePic(num){
+        this.picList.splice(num,1);
       },
       // 点击裁剪，这一步是可以拿到处理后的地址
       finish() {
@@ -1745,22 +1813,22 @@
                 label:v.unitName,
                 children:[]
               })
-              jobCopy=result.data.data;
             })
+            jobCopy=result.data.data;
             jobList.forEach((item,index)=>{
               var jobdata = 'recruitId='+this.$route.query.key+'&unitId='+item.value
               queryRecruitmentJob(jobdata).then(res=>{
                 if(res.data.code == 200){
                   res.data.data.forEach((v,i)=>{
                     jobList[index].children.push({
-                      value:v.subjectId,
+                      value:v.jobId,
                       label:v.subjectName,
                     })
-                    this.prepareData = jobList;
-                    this.$forceUpdate;
                   })
+                  this.prepareData = jobList;
                   jobCopy[index].children = res.data.data;
                   this.jobData = jobCopy;
+                  this.$forceUpdate;
                 }else {
                   this.$message({
                     message: res.data.msg,
@@ -2174,6 +2242,66 @@
                   font-weight:400;
                   color:rgba(255,51,51,1);
                   line-height: 15px;
+                }
+              }
+              .pic_list{
+                .pic_tle{
+                  display: block;
+                  margin-bottom: 15px;
+                  .tle{
+                    font-size:16px;
+                    font-weight:400;
+                    color:rgba(102,102,102,1);
+                    line-height: 26px;
+                  }
+                  .p{
+                    font-size:14px;
+                    font-weight:400;
+                    color:rgba(153,153,153,1);
+                    line-height: 26px;
+                  }
+                }
+                .pic_box{
+                  .img{
+                    position: relative;
+                    width: 150px;
+                    height: 100px;
+                    margin-bottom: 10px;
+                    margin-right: 10px;
+                    cursor: pointer;
+                    .pic{
+                      width: 150px;
+                      height: 100px;
+                    }
+                    .close{
+                      position: absolute;
+                      right: 0px;
+                      top: 0px;
+                      width: 14px;
+                      height: 14px;
+                      z-index: 3;
+                    }
+                  }
+                }
+                .pic_upload{
+                  width: 150px;
+                  height: 100px;
+                  margin-bottom: 10px;
+                  margin-right: 10px;
+                  position: relative;
+                  background-color: #F5F5F5;
+                  text-align: center;
+                  .uploader{
+                    width: 150px;
+                    height: 100px;
+                    line-height: 100px;
+                    cursor: pointer;
+                  }
+                  img{
+                    display: inline-block;
+                    width: 42px;
+                    height: 42px;
+                  }
                 }
               }
             }

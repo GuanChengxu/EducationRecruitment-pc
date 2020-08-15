@@ -10,7 +10,7 @@
           </a>
           >
           <a href="javascript:void(0)" v-show="linkName">
-            招生简章
+            招聘简章
           </a>
         </div>
         <div class="detail">
@@ -82,15 +82,10 @@
     .detail{
       padding-bottom: 40px;
       .con{
-        font-size: 16px;
-        font-weight: 400;
-        color: #333;
-        line-height: 30px;
-        white-space: pre-wrap;
       }
       button{
-        display: block;
         width: 124px;
+        display: block;
         height: 40px;
         background: #4f79ff;
         border-radius: 5px;

@@ -36,9 +36,9 @@
 
     },
     mounted() {
-      console.log(getUserId())
       getUserId() ? this.isLogin = true : this.isLogin = false;
       getUserId() ? this.userInfo = {name:JSON.parse(getUserId()).name} : '';
+      getUserId() ? console.log(JSON.parse(getUserId())) : '';
       if(this.$route.query.ticket && !this.isLogin) {
         getUserInfoByTicket({ticket:this.$route.query.ticket}).then(res=>{
           if(res.data.code == 200){
@@ -51,7 +51,6 @@
                 }
               });
             }else {
-              console.log(res.data.data)
               setUserId(res.data.data)
               this.userInfo = {
                 name: res.data.data.name,
@@ -71,12 +70,14 @@
     },
     methods: {
       signIn(){
-        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=11&type=1';
+        // window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=test&type=1';
+        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=official&type=1';
       },
       signOut(){
         removeUserId();
         this.userInfo = null;
         this.isLogin = false;
+        this.$router.push({path:'/'})
       }
     },
   }

@@ -24,9 +24,14 @@
             </template>
             <el-table-column prop="recruitTheme" label="主题" width="500">
               <template slot-scope="scope">
-                <span v-bind:class="scope.row.applyStatus==1?'blue':'black'" @click="gotoLink(scope.row)">
-                  {{scope.row.recruitTheme}}
-                </span>
+                <div class="clearfix">
+                  <span :class="scope.row.applyStatus == 1?'icon top1 fl':(scope.row.applyStatus == 2?'icon fl':'icon top2 fl')" @click="gotoLink(scope.row)">
+                    <img :src="scope.row.applyStatus == 1?pichot:(scope.row.applyStatus == 2?'':picfire)" alt="">
+                  </span>
+                    <span v-bind:class="scope.row.applyStatus == 1?'blue tle fl':(scope.row.applyStatus == 2?'black tle fl':'black tle fl')" @click="gotoLink(scope.row)">
+                    {{scope.row.recruitTheme}}
+                  </span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="applyStartTime" label="报名时间" width="400">
@@ -38,7 +43,7 @@
             </el-table-column>
             <el-table-column prop="applyStatus" label="报名" width="180">
               <template slot-scope="scope">
-                <span v-bind:class="scope.row.applyStatus==1?'goto':'end'" @click="gotoLink(scope.row)">
+                <span v-bind:class="scope.row.applyStatus == 1?'goto':(scope.row.applyStatus == 2?'nostart':'end')" @click="gotoLink(scope.row)">
                   {{scope.row.applyStatus == 1?'去报名':(scope.row.applyStatus == 2?'已结束':'未开始')}}
                 </span>
               </template>
@@ -73,7 +78,9 @@
         pageNum:1,
         totalData:0,
         //招聘列表
-        tableData:[]
+        tableData:[],
+        pichot:require('../assets/on.png'),
+        picfire:require('../assets/nstart.png'),
       }
     },
     created() {
@@ -174,12 +181,32 @@
       }
       .content{
         padding-bottom: 38px;
+        .icon{
+          margin-left: 30px;
+          display: inline-block;
+          width: 60px;
+          text-align: right;
+          line-height: 34px;
+          cursor: pointer;
+          img{
+            max-width: 100%;
+          }
+        }
+        .top1{
+          margin-top: -10px;
+        }
+        .top2{
+          margin-top: -5px;
+        }
+        .tle{
+          width: calc(100% - 30px - 60px);
+          padding-left: 10px;
+        }
         .blue{
           font-size:18px;
           font-weight:400;
           color:rgba(80,126,255,1);
-          line-height:24px;
-          padding-left: 50px;
+          line-height:34px;
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
@@ -191,8 +218,19 @@
           font-size:18px;
           font-weight:400;
           color:rgba(51,51,51,1);
-          line-height:24px;
-          padding-left: 50px;
+          line-height:34px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          cursor: pointer;
+        }
+        .grey{
+          font-size:18px;
+          font-weight:400;
+          color:#666666;
+          line-height:34px;
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
@@ -223,6 +261,15 @@
           font-size:18px;
           font-weight:400;
           color:rgba(51,51,51,1);
+          line-height:24px;
+          cursor: pointer;
+        }
+        .nostart{
+          display: block;
+          text-align: center;
+          font-size:18px;
+          font-weight:400;
+          color:#666666;
           line-height:24px;
           cursor: pointer;
         }

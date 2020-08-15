@@ -637,4 +637,7 @@
     border: solid 1px blue ;
     margin: 10mm 15mm 10mm 15mm; /* margin you want for the content */
   }
+  .download{
+    cursor: pointer;
+  }
 </style>
