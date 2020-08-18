@@ -71,7 +71,7 @@
     methods: {
       signIn(){
         // window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=test&type=1';
-        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=official&type=1';
+        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=11&type=1';
       },
       signOut(){
         removeUserId();

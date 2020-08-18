@@ -73,21 +73,26 @@
           </table>
           <p class="title" style="font-size:50px">应聘事业单位诚信承诺书</p>
           <p class="content" style="font-size:30px;line-height: 46px;">
-            本人承诺，在报名<span class="name">{{bmData.recruitTheme}}</span>参加过程中，做到以下几点：
+            本人承诺，在报名参加<span class="name">{{returnName(bmData.recruitTheme,1)}}</span>招聘过程中，做到以下几点：
           </p>
           <p class="content" style="font-size:30px;line-height: 46px;">
-            一、我已仔细阅读《<span class="name">{{bmData.recruitTheme}}简章</span>》，并将及时查询相关招聘信息，认真阅读与应聘岗位相关的各项通知要求，掌握招聘政策、招聘流程、招聘要求。
+            一、我已仔细阅读《<span class="name">{{returnName(bmData.recruitTheme,2)}}</span>》，并将及时查询相关招聘信息，认真阅读与应聘岗位相关的各项通知要求，掌握招聘政策、招聘流程、招聘要求。
+<!--            一、我已仔细阅读《<span class="name">{{bmData.recruitTheme}}简章</span>》，并将及时查询相关招聘信息，认真阅读与应聘岗位相关的各项通知要求，掌握招聘政策、招聘流程、招聘要求。-->
           </p>
           <p class="content" style="font-size:30px;line-height: 46px;">二、我本人符合《招聘简章》、招聘岗位规定的条件和要求，我所提供的个人信息、证明资料、证件等真实、准确，提供的通讯联系方式畅通有效。</p>
           <p class="content" style="font-size:30px;line-height: 46px;">三、我将自觉遵守事业单位公开招聘的各项规定，诚实守信、严守纪律、服从管理，认真按时履行应聘人员的义务。被列入考察范围后，我将按照招聘单位、招聘单位主管部门或招聘主管机关指定时间和要求，提供证件材料、转调档案、配合考察、参加体检、办理聘用手续、按时报到上班。</p>
-          <p class="content" style="font-size:30px;line-height: 46px;">如我违反以上承诺，我将自愿承担取消聘用资格等相应责任。</p>
+          <p class="content">四、其他事项：</p>
+          <p class="nocontent" style="height: 80px">
+          </p>
+          <p class="content" style="font-size:30px;line-height: 46px;">如我违反以上承诺，我将自愿承担取消聘用资格等相应责任。
+          </p>
           <div class="footer"  style="font-size:30px;line-height: 46px;margin-top: 50px;">
             <p class="sign">应聘人员签名：</p>
             <p class="date" style="margin-left:100px;margin-top: 30px;">年  月   日</p>
           </div>
         </div>
         <div id="printMe3" v-if="dayin2" style="background:#fff;margin-left: 5mm">
-          <h3 class="bkdw" style="width:90%;min-height:40px;font-size:40px;padding:0;margin:0 0 30px 0;line-height: 50px;text-align: center">{{bmData.recruitTheme}}报名表</h3>
+          <h3 class="bkdw" style="width:90%;min-height:40px;font-size:40px;padding:0;margin:0 0 30px 0;line-height: 50px;text-align: center">{{returnName(bmData.recruitTheme,1)}}报名表</h3>
           <div style="display:flex;justify-content: space-between;">
             <span class = "bkdw1" style="height:40px;font-size:20px;">报考单位：{{bmData.unit}}</span>
             <span class = "bkxx" style="height:40px;font-size:20px;position:relative;left:-100px;">报考岗位：{{bmData.subject}}</span>
@@ -426,7 +431,23 @@
         }else if(validateEmpty(this.bmData.certificationInfo.specialtiesEducationNature)){
           return this.bmData.certificationInfo.specialtiesAcademy + '    '+this.bmData.certificationInfo.specialtiesEducationNature
         }
-      }
+      },
+      //返回名称
+      returnName(data,type){
+        if(type == 1){
+          if(data[data.length-2] + data[data.length-1] == '简章'){
+            return data.slice(0,data.length-2);
+          }else {
+            return data;
+          }
+        }else if(type == 2){
+          if(data[data.length-2] + data[data.length-1] != '简章'){
+            return data+'简章';
+          }else{
+            return data;
+          }
+        }
+      },
     },
     components: {
       Header

@@ -1490,7 +1490,7 @@
           this.jobData.forEach((v,i)=>{
             if(v.unitId == this.choseStation[0]){
               v.children.forEach((v1,i1)=>{
-                if(v.jobId == this.choseStation[1]){
+                if(v1.jobId == this.choseStation[1]){
                   data.postId=v1.jobId;
                 }
               })
@@ -1753,7 +1753,14 @@
           if(isJPG && isLt3k){
             var imgData = new FormData();
             imgData.append('file',newFile.file)
+            const loading = this.$loading({
+              lock: true,
+              text: '上传图片中...',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
             avatar(imgData).then(res=>{
+              loading.close();
               if(res.data.code == 200){
                 this.picList.push({url:res.data.imgUrl});
               }else {
