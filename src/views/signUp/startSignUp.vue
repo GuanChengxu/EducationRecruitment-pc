@@ -122,6 +122,7 @@
                       class="avatar-uploader"
                       :maximum="1"
                       :multiple="false"
+                      accept="image/*"
                       @input-file="beforeAvatarUpload"
                   　　 >
                       <img v-if="imageUrl" :src="'https://ystwx.yantai.gov.cn/jneduapi2'+imageUrl" class="avatar">
@@ -213,6 +214,7 @@
                             class="uploader"
                             :maximum="1"
                             :multiple="false"
+                            accept="image/*"
                             input-id="file2"
                             @input-file="beforePicUpload"
                             　　 >
@@ -360,22 +362,11 @@
           //裁剪图片弹窗
           dialogVisible: false,
           // 裁剪组件的基础配置option
-          option: {
-            img: "", // 裁剪图片的地址
-            info: true, // 裁剪框的大小信息
-            outputSize: 1, // 裁剪生成图片的质量
-            outputType: "jpeg", // 裁剪生成图片的格式
-            canScale: false, // 图片是否允许滚轮缩放
-            autoCrop: true, // 是否默认生成截图框
-            fixedBox: true, // 固定截图框大小 不允许改变
-            fixed: true, // 是否开启截图框宽高固定比例
-            fixedNumber: [295, 413], // 截图框的宽高比例
-            full: true, // 是否输出原图比例的截图
-            canMoveBox: false, // 截图框能否拖动
-            original: false, // 上传图片按照原始比例渲染
-            centerBox: false, // 截图框是否被限制在图片里面
-            infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
-          },
+          option:{},
+          isCrop:true,
+          //裁剪证明资料
+          picVisible:false,
+          // 裁剪组件的基础配置picoption
           fileKey:'',
           files: [],
           teacherId:null,
@@ -1728,12 +1719,29 @@
             this.$message.error('上传头像图片大小不能超过 20M!');
           }
           if(isJPG && isLt3k){
+            that.option = {
+              img: "", // 裁剪图片的地址
+              info: true, // 裁剪框的大小信息
+              outputSize: 1, // 裁剪生成图片的质量
+              outputType: "jpeg", // 裁剪生成图片的格式
+              canScale: false, // 图片是否允许滚轮缩放
+              autoCrop: true, // 是否默认生成截图框
+              fixedBox: true, // 固定截图框大小 不允许改变
+              fixed: true, // 是否开启截图框宽高固定比例
+              fixedNumber: [295, 413], // 截图框的宽高比例
+              full: true, // 是否输出原图比例的截图
+              canMoveBox: false, // 截图框能否拖动
+              original: false, // 上传图片按照原始比例渲染
+              centerBox: false, // 截图框是否被限制在图片里面
+              infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+            };
             var reader = new FileReader();
             reader.readAsDataURL(newFile.file);
             reader.onload = function(e){
               that.option.img = e.target.result
               that.fileKey = newFile.id
               that.dialogVisible = true
+              that.isCrop = true;
             };
           }
         }
@@ -1745,31 +1753,35 @@
           const isJPG = newFile.type === 'image/jpeg' || newFile.type === 'image/png' || newFile.type === 'image/jpeg';
           const isLt3k = newFile.size / 1024 / 1024 < 20;
           if (!isJPG) {
-            this.$message.error('上传头像图片只能是 jpg、jpeg和png 格式!');
+            this.$message.error('上传证明材料只能是 jpg、jpeg和png 格式!');
           }
           if (!isLt3k) {
-            this.$message.error('上传头像图片大小不能超过 20M!');
+            this.$message.error('上传证明材料大小不能超过 20M!');
           }
           if(isJPG && isLt3k){
-            var imgData = new FormData();
-            imgData.append('file',newFile.file)
-            const loading = this.$loading({
-              lock: true,
-              text: '上传图片中...',
-              spinner: 'el-icon-loading',
-              background: 'rgba(0, 0, 0, 0.7)'
-            });
-            avatar(imgData).then(res=>{
-              loading.close();
-              if(res.data.code == 200){
-                this.picList.push({url:res.data.imgUrl});
-              }else {
-                this.$message({
-                  message: res.data.msg,
-                  type: 'error'
-                });
-              }
-            })
+            that.option = {
+              img: "", // 裁剪图片的地址
+              info: true, // 裁剪框的大小信息
+              outputSize: 1, // 裁剪生成图片的质量
+              outputType: "jpeg", // 裁剪生成图片的格式
+              canScale: false, // 图片是否允许滚轮缩放
+              autoCrop: true, // 是否默认生成截图框
+              fixedBox: false, // 固定截图框大小 不允许改变
+              fixed: false, // 是否开启截图框宽高固定比例
+              full: true, // 是否输出原图比例的截图
+              canMoveBox: false, // 截图框能否拖动
+              original: false, // 上传图片按照原始比例渲染
+              centerBox: false, // 截图框是否被限制在图片里面
+              infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+            };
+            var reader = new FileReader();
+            reader.readAsDataURL(newFile.file);
+            reader.onload = function(e){
+              that.option.img = e.target.result
+              that.fileKey = newFile.id
+              that.dialogVisible = true
+              that.isCrop = false;
+            };
           }
         }
       },
@@ -1791,10 +1803,67 @@
           // var fileData = new File([u8arr], this.fileKey, {type:mime});
           var imgData = new FormData();
           imgData.append('file',theBlob)
+          if(this.isCrop){
+            avatar(imgData).then(res=>{
+              if(res.data.code == 200){
+                this.imageUrl = res.data.imgUrl;
+                this.option = {};
+                this.dialogVisible = false;
+              }else {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'error'
+                });
+              }
+            })
+          }else {
+            const loading = this.$loading({
+              lock: true,
+              text: '上传图片中...',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
+            avatar(imgData).then(res=>{
+              loading.close();
+              if(res.data.code == 200){
+                this.picList.push({url:res.data.imgUrl});
+                this.option = {};
+                this.dialogVisible = false;
+              }else {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'error'
+                });
+              }
+            })
+          }
+        })
+      },
+      // 点击裁剪，这一步是可以拿到处理后的地址
+      finishPic() {
+        this.$refs.cropper.getCropData((data) => {
+          var arr = data.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+          while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          let theBlob = new Blob([u8arr],{type:mime})
+          theBlob.lastModidiedDate = new Date();
+          theBlob.name = this.fileKey;
+          // var fileData = new File([u8arr], this.fileKey, {type:mime});
+          var imgData = new FormData();
+          imgData.append('file',theBlob)
+          const loading = this.$loading({
+            lock: true,
+            text: '上传图片中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
           avatar(imgData).then(res=>{
+            loading.close();
             if(res.data.code == 200){
-              this.imageUrl = res.data.imgUrl;
-              this.dialogVisible = false;
+              this.picList.push({url:res.data.imgUrl});
+              this.picVisible = false;
             }else {
               this.$message({
                 message: res.data.msg,

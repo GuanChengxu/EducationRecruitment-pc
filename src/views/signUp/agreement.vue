@@ -24,6 +24,7 @@
             <div :class="status==1 || status==2?'goto':'noclick2 goto'" @click="query()">已报名查询></div>
           </div>
         </div>
+        <!-- 缴费成功 -->
         <div class="success" v-if="resultData == 'success'">
           <p>
             欢迎您报考本次招聘相关岗位，您的报名已经通过审核，<br/>
@@ -36,6 +37,7 @@
           </div>
           <span class="download" @click="download('all')">一键下载>></span>
         </div>
+        <!-- 正在审核 -->
         <div class="underReview" v-if="resultData == 'underReview'">
           <img src="@/assets/underReview.png" alt="">
           <p>
@@ -43,6 +45,7 @@
             认真准备考试，预祝您取得好成绩！
           </p>
         </div>
+        <!-- 未通过 -->
         <div class="destruction" v-if="resultData == 'destruction'">
           <img src="@/assets/destruction.png" alt="">
           <p>
@@ -104,7 +107,7 @@
               <th class="tg-c3owxm" style="height:40px;font-size:20px;">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</th>
               <th class="tg-c3ow1" style="height:40px;font-size:20px">{{bmData.name}}</th>
               <th class="tg-c3owxb" style="height:40px;font-size:20px">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</th>
-              <th class="tg-c3ow2" style="height:40px;font-size:20px">{{bmData.sex == 0?'男':(bmData.sex == 1?'女':'未知')}}</th>
+              <th class="tg-c3ow2" colspan="2" style="height:40px;font-size:20px">{{bmData.sex == 0?'男':(bmData.sex == 1?'女':'未知')}}</th>
               <th class="tg-c3owzz" style="height:40px;font-size:20px">政治面貌</th>
               <th class="tg-0pky3" colspan="2" style="height:40px;font-size:20px">{{bmData.politicsStatus}}</th>
               <th class="tg-0pky4" colspan="1" rowspan="4">
@@ -115,31 +118,32 @@
               <td class="tg-c3ow" style="height:40px;font-size:20px">民&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;族</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">{{bmData.nation}}</td>
               <td class="tg-c3ow" colspan="2" style="height:40px;font-size:20px">身份证号码</td>
-              <td class="tg-c3ow" colspan="3" style="height:40px;font-size:20px">{{bmData.idNumber}}</td>
+              <td class="tg-c3ow" colspan="4" style="height:40px;font-size:20px">{{bmData.idNumber}}</td>
             </tr>
             <tr>
               <td class="tg-c3ow" style="height:40px;font-size:20px">学&nbsp;历&nbsp;性&nbsp;质</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">{{getNature()}}</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历</td>
-              <td class="tg-c3ow" style="height:40px;font-size:20px">{{bmData.certificationInfo.highestEducation}}</td>
+              <td class="tg-c3ow" colspan="3" style="height:40px;font-size:20px">{{bmData.certificationInfo.highestEducation}}</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位</td>
               <td class="tg-0pky" style="height:40px;font-size:20px">{{bmData.maxDegree}}</td>
             </tr>
             <tr>
               <td class="tg-c3ow" colspan="2" style="height:40px;font-size:20px">毕业院校及专业</td>
-              <td class="tg-c3ow" colspan="4" style="height:40px;font-size:20px;text-align: left;overflow: hidden;">{{getSchool()}}</td>
+              <td class="tg-c3ow" colspan="6" style="height:40px;font-size:20px;text-align: left;overflow: hidden;">{{getSchool()}}</td>
             </tr>
             <tr>
               <td class="tg-c3ow" style="height:40px;font-size:20px">教师资格证</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">种&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类</td>
               <td class="tg-c3ow" colspan="2" style="height:40px;font-size:20px;text-align: left;">{{bmData.certificationInfo.kind}}</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">编&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</td>
-              <td class="tg-0pky" colspan="4" style="height:40px;font-size:20px;text-align: left;">{{bmData.certificationInfo.serialNumber}}</td>
+              <td class="tg-0pky" colspan="2" style="height:40px;font-size:20px;text-align: left;">{{bmData.certificationInfo.serialNumber}}</td>
+              <td class="tg-c3ow" style="height:40px;font-size:20px">手机：</td>
+              <td class="tg-c3ow" colspan="1" style="height:40px;font-size:20px;text-align: left;">{{bmData.mobile}}</td>
             </tr>
             <tr>
-              <td class="tg-c3ow" style="height:40px;font-size:20px">联&nbsp;系&nbsp;方&nbsp;式</td>
-              <td class="tg-c3ow" style="height:40px;font-size:20px">手机：</td>
-              <td class="tg-c3ow" colspan="2" style="height:40px;font-size:20px;text-align: left;">{{bmData.mobile}}</td>
+              <td class="tg-c3ow" style="height:40px;font-size:20px">生&nbsp;&nbsp;源&nbsp;&nbsp;地</td>
+              <td class="tg-c3ow" colspan="3" style="height:40px;font-size:20px;text-align: left;">{{bmData.birthplace}}</td>
               <td class="tg-c3ow" style="height:40px;font-size:20px">电子邮箱：</td>
               <td class="tg-0pky" colspan="4" style="height:40px;font-size:20px;text-align: left;">{{bmData.email}}</td>
             </tr>
@@ -407,7 +411,23 @@
       },
       //跳转页面
       gotoSignUp(){
-        this.$router.push({path:'/startSignUp',query:{key:this.key}})
+        recruitmentById(this.key).then(result => {
+          if(result.data.code == 200) {
+            if (result.data.data.applyStatus != 1) {
+              this.$message({
+                message: '该招聘未开始或已结束，请返回列表重新选择',
+                type: 'error'
+              });
+            } else {
+              this.$router.push({path: '/startSignUp', query: {key: this.key}})
+            }
+          }else {
+            this.$message({
+              message: result.data.msg,
+              type: 'error'
+            });
+          }
+        })
       },
       //学历性质
       getNature(){
@@ -423,13 +443,13 @@
       },
       getSchool(){
         if(validateEmpty(this.bmData.certificationInfo.doctorEducationNature)){
-          return this.bmData.certificationInfo.doctorAcademy + '    '+ this.bmData.certificationInfo.doctorEducationNature
+          return this.bmData.certificationInfo.doctorAcademy + '    '+ this.bmData.certificationInfo.doctorSpecialty
         }else if(validateEmpty(this.bmData.certificationInfo.masterEducationNature)){
-          return this.bmData.certificationInfo.masterAcademy + '    '+this.bmData.certificationInfo.masterEducationNature
+          return this.bmData.certificationInfo.masterAcademy + '    '+this.bmData.certificationInfo.masterSpecialty
         }else if(validateEmpty(this.bmData.certificationInfo.bachelorEducationNature)){
-          return this.bmData.certificationInfo.bachelorAcademy + '    '+this.bmData.certificationInfo.bachelorEducationNature
+          return this.bmData.certificationInfo.bachelorAcademy + '    '+this.bmData.certificationInfo.bachelorSpecialty
         }else if(validateEmpty(this.bmData.certificationInfo.specialtiesEducationNature)){
-          return this.bmData.certificationInfo.specialtiesAcademy + '    '+this.bmData.certificationInfo.specialtiesEducationNature
+          return this.bmData.certificationInfo.specialtiesAcademy + '    '+this.bmData.certificationInfo.specialtiesSpecialty
         }
       },
       //返回名称
