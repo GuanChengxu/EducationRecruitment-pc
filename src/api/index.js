@@ -4,7 +4,7 @@
 import Axios from 'axios'
 import qs from 'qs'
 
-const baseUrl = 'http://192.168.31.68:8081'
+const baseUrl = 'http://154.8.201.198:8081'
 const config = {
   headers: {
     'Content-Type': 'application/json'
