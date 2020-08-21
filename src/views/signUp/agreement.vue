@@ -45,6 +45,14 @@
             认真准备考试，预祝您取得好成绩！
           </p>
         </div>
+        <!-- 获取支付码 -->
+        <div class="underReview" v-if="resultData == 'paymentCode'">
+          <img src="@/assets/underReview.png" alt="">
+          <p>
+            您的报名信息我们正在进行审批，请耐心等待，<br/>
+            认真准备考试，预祝您取得好成绩！
+          </p>
+        </div>
         <!-- 未通过 -->
         <div class="destruction" v-if="resultData == 'destruction'">
           <img src="@/assets/destruction.png" alt="">

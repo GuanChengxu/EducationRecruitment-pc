@@ -125,7 +125,7 @@
                       accept="image/*"
                       @input-file="beforeAvatarUpload"
                   　　 >
-                      <img v-if="imageUrl" :src="'https://ystwx.yantai.gov.cn/jneduapi2'+imageUrl" class="avatar">
+                      <img v-if="imageUrl" :src="'http://192.168.31.68:8081'+imageUrl" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </FileUpload>
                     <h1>近期正面一寸照片</h1>
@@ -207,7 +207,7 @@
                       <div class="pic_box fl clearfix">
                         <div class="img fl" v-for="(item,index) in picList" :key="index">
                           <img class="close" @click="removePic(index)" src="@/assets/webx.png" alt="">
-                          <img class="pic" :src="'https://ystwx.yantai.gov.cn/jneduapi2'+item.url" alt="">
+                          <img class="pic" :src="'http://192.168.31.68:8081'+item.url" alt="">
                         </div>
                         <div class="pic_upload fl" v-if="picList.length<6">
                           <FileUpload

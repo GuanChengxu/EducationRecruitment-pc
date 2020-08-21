@@ -4,7 +4,7 @@
 import Axios from 'axios'
 import qs from 'qs'
 
-const baseUrl = 'https://ystwx.yantai.gov.cn/jneduapi2'
+const baseUrl = 'http://192.168.31.68:8081'
 const formConfig = {
   headers: {
     'Content-Type': 'multipart/form-data'
