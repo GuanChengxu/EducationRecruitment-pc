@@ -4,7 +4,9 @@
 import Axios from 'axios'
 import qs from 'qs'
 
-const baseUrl = 'http://154.8.201.198:8081'
+import commen from '@/settings.js'
+
+const baseUrl = commen.baseUrl;
 // 获取招生简章
 export function recruitmentById (data) {
   return Axios.get(baseUrl + '/edu/recruitment/recruitmentById/'+data)

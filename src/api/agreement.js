@@ -3,8 +3,9 @@
  */
 import Axios from 'axios'
 import qs from 'qs'
+import commen from '@/settings.js'
 
-const baseUrl = 'http://154.8.201.198:8081'
+const baseUrl = commen.baseUrl;
 const config = {
   headers: {
     'Content-Type': 'application/json'

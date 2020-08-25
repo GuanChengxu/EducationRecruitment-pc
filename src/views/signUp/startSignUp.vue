@@ -125,7 +125,7 @@
                       accept="image/*"
                       @input-file="beforeAvatarUpload"
                   　　 >
-                      <img v-if="imageUrl" :src="'http://154.8.201.198:8081'+imageUrl" class="avatar">
+                      <img v-if="imageUrl" :src="baseUrl+imageUrl" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </FileUpload>
                     <h1>近期正面一寸照片</h1>
@@ -207,7 +207,7 @@
                       <div class="pic_box fl clearfix">
                         <div class="img fl" v-for="(item,index) in picList" :key="index">
                           <img class="close" @click="removePic(index)" src="@/assets/webx.png" alt="">
-                          <img class="pic" :src="'http://154.8.201.198:8081'+item.url" alt="">
+                          <img class="pic" :src="baseUrl+item.url" alt="">
                         </div>
                         <div class="pic_upload fl" v-if="picList.length<6">
                           <FileUpload
@@ -577,10 +577,12 @@
           userData:{},
           highest:'',
           //证明资料
-          picList:[]
+          picList:[],
+          baseUrl:''
         }
     },
     async created() {
+      this.baseUrl = commen.baseUrl;
       this.key = this.$route.query.key
       getUserId() ? this.userData = JSON.parse(getUserId()) : '';
       await this.getTeacher();
