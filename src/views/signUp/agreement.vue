@@ -26,8 +26,13 @@
         </div>
         <!-- 缴费成功 -->
         <div class="success" v-if="resultData == 'success'">
-          <p>
+          <p v-if="isPay == 0">
             欢迎您报考本次招聘相关岗位，您的报名已经通过审核，<br/>
+            请打印《我的报名表》和《诚信承诺书》参加现场考核，<br/>
+            预祝您取得好成绩!
+          </p>
+          <p v-if="isPay == 1">
+            欢迎您报考本次招聘相关岗位，您已成功报名并缴费，<br/>
             请打印《我的报名表》和《诚信承诺书》参加现场考核，<br/>
             预祝您取得好成绩!
           </p>
@@ -44,6 +49,23 @@
             您的报名信息我们正在进行审批，请耐心等待，<br/>
             认真准备考试，预祝您取得好成绩！
           </p>
+        </div>
+        <!-- 获取支付码 -->
+        <div class="paymentCode" v-if="resultData == 'paymentCode'">
+          <img src="@/assets/pass.png" alt="">
+          <p>
+            欢迎您报考本次招聘相关岗位，您的报名已经通过审核，请点击下方按钮，获取支付码，
+            前往&lt;烟台一手通&gt;app搜索“xxxxx”进行缴费，待缴费成功后回到此处,下载打印《我的
+            报名表》和《诚信承诺书》。<br/>
+            温馨提示：本次报名缴费时间为 {{payStartTime}}~{{payEndTime}}，请合理安排时间。
+          </p>
+          <button v-if="!showCode" @click="getCode">获取支付码</button>
+          <div class="haveCode" v-if="showCode">
+            <span class="code">
+              {{payCode}}
+            </span>
+            <span class="text">此为您的专属支付码，请妥善保管</span>
+          </div>
         </div>
         <!-- 未通过 -->
         <div class="destruction" v-if="resultData == 'destruction'">
@@ -213,9 +235,9 @@
 <script>
   import Header from '@/components/header.vue'
   import { getUserId,setUserId,removeUserId } from '@/utils/auth'
-  import { autoHeight,validateEmpty } from '@/utils/index'
+  import { autoHeight,validateEmpty,parseTime } from '@/utils/index'
   import {recruitmentById} from '@/api/detail.js'
-  import {startApplyOrQuery,exportPDF,queryTeacherInfo} from '@/api/agreement.js'
+  import {startApplyOrQuery,queryTeacherInfo,getCode} from '@/api/agreement.js'
   import commen from '@/settings.js'
   export default {
     data() {
@@ -225,6 +247,7 @@
         status:null,
         checked:false,//是否同意
         resultData:null,//类型
+        isPay:false,
         notice:'',
         uuid:null,
         remark:'',
@@ -233,7 +256,14 @@
         bmData:null,
         imgUrl:'',
         isClick:true,
-        btnName:null
+        btnName:null,
+        //展示支付码
+        showCode:false,
+        //支付码
+        payCode:'',
+        //缴费时间
+        payStartTime:'',
+        payEndTime:''
       }
     },
     created() {
@@ -244,6 +274,9 @@
           this.notice = result.data.data.applyNotice
           this.linkName = result.data.data.recruitTheme
           this.status = result.data.data.applyStatus
+          this.isPay = result.data.data.isPay
+          this.payStartTime = parseTime(result.data.data.payStartTime.replace(/-/g,"/"),'{y} {m}{d} {h}:{i}');
+          this.payEndTime = parseTime(result.data.data.payEndTime.replace(/-/g,"/"),'{y} {m}{d} {h}:{i}');
           if(result.data.data.applyStatus == 0){
             this.btnName = '未开始';
             this.isClick = true;
@@ -285,8 +318,18 @@
                         if(res.data.data.isverify == 1){
                           this.resultData = 'underReview';
                         }else if(res.data.data.isverify == 2){
-                          this.resultData = 'success';
-                          this.queryInfo(res.data.data.teacherId);
+                          if(result.data.data.isPay == 1){
+                            if(res.data.data.payStatus == 1){
+                              this.resultData = 'success';
+                              this.queryInfo(res.data.data.teacherId);
+                            }else {
+                              this.resultData = 'paymentCode';
+                              this.showCode = false;
+                            }
+                          }else {
+                            this.resultData = 'success';
+                            this.queryInfo(res.data.data.teacherId);
+                          }
                         }else if(res.data.data.isverify == 3){
                           this.resultData = 'destruction';
                           this.remark = res.data.data.isverifyRemark
@@ -342,8 +385,18 @@
                     if (res.data.data.isverify == 1) {
                       this.resultData = 'underReview';
                     } else if (res.data.data.isverify == 2) {
-                      this.resultData = 'success';
-                      this.queryInfo(res.data.data.teacherId);
+                      if(result.data.data.isPay == 1){
+                        if(res.data.data.payStatus == 1){
+                          this.resultData = 'success';
+                          this.queryInfo(res.data.data.teacherId);
+                        }else {
+                          this.resultData = 'paymentCode';
+                          this.showCode = false;
+                        }
+                      }else {
+                        this.resultData = 'success';
+                        this.queryInfo(res.data.data.teacherId);
+                      }
                     } else if (res.data.data.isverify == 3) {
                       this.resultData = 'destruction';
                       this.remark = res.data.data.isverifyRemark
@@ -370,6 +423,35 @@
           }else {
             this.$message({
               message: result.data.msg,
+              type: 'error'
+            });
+          }
+        })
+      },
+      //获取支付码
+      getCode(){
+        var data = 'recruitId='+this.key+'&userId='+this.uuid;
+        startApplyOrQuery(data).then(result=>{
+          if(result.data.code == 200){
+            getCode(result.data.data.teacherId).then(res=>{
+              if(res.data.code == 200){
+                this.payCode = res.data.msg;
+                this.showCode = true;
+              }else {
+                this.$message({
+                  message: '获取支付码失败，请重试',
+                  type: 'error'
+                });
+              }
+            })
+          }else if(result == '' || result == null || result == undefined){
+            this.$message({
+              message: '暂无报名信息，请先去报名',
+              type: 'error'
+            });
+          } else {
+            this.$message({
+              message: '获取报名信息失败，请重试',
               type: 'error'
             });
           }
@@ -619,6 +701,66 @@
         font-weight:bold;
         color:rgba(67,109,243,1);
         line-height: 30px;
+      }
+    }
+    //获取支付码
+    .paymentCode{
+      padding-top: 112px;
+      text-align: center;
+      img{
+        display: block;
+        margin: 0 auto;
+        width: 199px;
+        height: 150px;
+      }
+      p{
+        width: 705px;
+        font-size:18px;
+        font-weight: 400;
+        color:#666666;
+        line-height:30px;
+        text-align: left;
+        margin: 38px auto 24px;
+      }
+      a{
+        display: inline-block;
+        font-size:21px;
+        font-weight:bold;
+        color:rgba(67,109,243,1);
+        line-height: 30px;
+      }
+      button{
+        width:170px;
+        height:50px;
+        background:rgba(67,110,243,1);
+        border-radius:10px;
+        margin: 30px auto;
+        font-size:20px;
+        font-weight:500;
+        color:rgba(255,255,255,1);
+        line-height:50px;
+      }
+      .haveCode{
+        .code{
+          display: block;
+          width:460px;
+          height:88px;
+          line-height: 88px;
+          border: 1px solid #446EF3;
+          font-size:36px;
+          font-weight:400;
+          color:rgba(102,102,102,1);
+          margin: 0 auto;
+        }
+        .text{
+          display: block;
+          font-size:18px;
+          font-weight:400;
+          color:rgba(102,102,102,1);
+          line-height:30px;
+          margin-top: 4px;
+          text-align: center;
+        }
       }
     }
     .success{
