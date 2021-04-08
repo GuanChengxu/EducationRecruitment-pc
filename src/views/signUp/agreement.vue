@@ -20,8 +20,8 @@
             <el-checkbox v-model="checked">我已认真阅读并同意</el-checkbox>
           </div>
           <div class="btn_box">
+            <div :class="status==1 || status==2?'goto':'noclick2 goto'" @click="query()">已报名查询</div>
             <button :class="status==1?'':'noclick'" @click="startSignUp()" v-show="btnName" :disabled="isClick">{{btnName}}</button>
-            <div :class="status==1 || status==2?'goto':'noclick2 goto'" @click="query()">已报名查询></div>
           </div>
         </div>
         <!-- 缴费成功 -->
@@ -39,14 +39,6 @@
         </div>
         <!-- 正在审核 -->
         <div class="underReview" v-if="resultData == 'underReview'">
-          <img src="@/assets/underReview.png" alt="">
-          <p>
-            您的报名信息我们正在进行审批，请耐心等待，<br/>
-            认真准备考试，预祝您取得好成绩！
-          </p>
-        </div>
-        <!-- 获取支付码 -->
-        <div class="underReview" v-if="resultData == 'paymentCode'">
           <img src="@/assets/underReview.png" alt="">
           <p>
             您的报名信息我们正在进行审批，请耐心等待，<br/>
@@ -546,22 +538,29 @@
           font-size:20px;
           font-weight:400;
           color:rgba(255,255,255,1);
+          margin: 0 20px;
+          cursor: pointer;
         }
         .noclick{
           background:#d9d6d9;
         }
         .goto{
-          position: absolute;
-          right: 0px;
-          top: 12px;
+          width:124px;
+          height:40px;
+          display: inline-block;
           font-size:18px;
           font-weight:400;
           color:rgba(79,121,255,1);
+          border: 1px solid rgba(79,121,255,1);
+          background-color: #ffffff;
           cursor: pointer;
+          border-radius:5px;
+          line-height: 40px;
         }
         .noclick2{
           pointer-events:none;
           color: #d9d6d9;
+          border: 1px solid #d9d6d9;
         }
       }
     }

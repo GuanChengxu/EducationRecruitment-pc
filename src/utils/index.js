@@ -119,6 +119,13 @@ export function checkEptValue (data){
     }
   }
 }
+export function validateEmptyx(keyVal) {
+  if(keyVal == undefined || keyVal=="" || keyVal==null){
+    return false
+  }else{
+    return true
+  }
+}
 //判断为空
 export function validateEmpty(keyVal) {
   if(keyVal == undefined || keyVal=="" || keyVal==null || keyVal.replace(/\s*/g, "") == ""){

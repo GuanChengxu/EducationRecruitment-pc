@@ -38,32 +38,40 @@
     mounted() {
       getUserId() ? this.isLogin = true : this.isLogin = false;
       getUserId() ? this.userInfo = {name:JSON.parse(getUserId()).name} : '';
-      getUserId() ? console.log(JSON.parse(getUserId())) : '';
       if(this.$route.query.ticket && !this.isLogin) {
-        getUserInfoByTicket({ticket:this.$route.query.ticket}).then(res=>{
-          if(res.data.code == 200){
-            if (res.data.data.authlevel < 1) {
-              this.$alert("请进入山东省统一认证平台补全信息", "提示", {
-                confirmButtonText: "确定",
-                callback: action => {
-                  window.location.href =
-                    "http://zwfw.sd.gov.cn/sfzw/front/user/index.do";
-                }
-              });
-            }else {
-              setUserId(res.data.data)
-              this.userInfo = {
-                name: res.data.data.name,
-              }
-              this.isLogin = true
-            }
-          }else{
-            this.$message({
-              message: res.data.msg,
-              type: 'error'
-            });
-          }
+        setUserId({
+          uuid:'1234567890',
+          name:'贾全义',
+          papersnumber:'370125199510143018'
         })
+        this.userInfo = {
+          name: res.data.data.name,
+        }
+        this.isLogin = true
+        // getUserInfoByTicket({ticket:this.$route.query.ticket}).then(res=>{
+        //   if(res.data.code == 200){
+        //     if (res.data.data.authlevel < 1) {
+        //       this.$alert("请进入山东省统一认证平台补全信息", "提示", {
+        //         confirmButtonText: "确定",
+        //         callback: action => {
+        //           window.location.href =
+        //             "http://zwfw.sd.gov.cn/sfzw/front/user/index.do";
+        //         }
+        //       });
+        //     }else {
+        //       setUserId(res.data.data)
+        //       this.userInfo = {
+        //         name: res.data.data.name,
+        //       }
+        //       this.isLogin = true
+        //     }
+        //   }else{
+        //     this.$message({
+        //       message: res.data.msg,
+        //       type: 'error'
+        //     });
+        //   }
+        // })
       }
     },
     updated() {
@@ -71,7 +79,7 @@
     methods: {
       signIn(){
         // window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=test&type=1';
-        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=111111155555&type=1';
+        window.location.href = 'http://zwfw.sd.gov.cn/JIS/front/login.do?uuid=aVFlgZQZXICb&gotourl=11&type=1';
       },
       signOut(){
         removeUserId();

@@ -23,5 +23,9 @@ export function exportPDF (data) {
 export function queryTeacherInfo (data) {
   return Axios.get(baseUrl + '/edu/recruitment/queryTeacherInfo/'+data)
 }
+//获取支付码
+export function getCode (data) {
+  return Axios.get(baseUrl + '/edu/recruitment/getPayCode/'+data)
+}
 
 

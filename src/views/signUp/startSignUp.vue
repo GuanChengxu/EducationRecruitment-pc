@@ -143,7 +143,6 @@
                         v-bind:class="userInfo.graduationTime.text?'ts9 fl':'ts9 fl noxl'"
                         v-model="userInfo.graduationTime.text"
                         type="year"
-                        :picker-options="pickerOptions1"
                         @focus="changeIsActive(true)"
                         @blur="changeIsActive(false)"
                         @change="inputJudge('graduationTime')"
@@ -252,7 +251,6 @@
                       clearable="false"
                       value-format="yyyy-MM-dd"
                       @change="resumeJudge(index)"
-                      :picker-options="pickerOptions0"
                       placeholder="请选择">
                     </el-date-picker>
                     <span class="fl">到</span>
@@ -263,7 +261,6 @@
                       clearable="false"
                       value-format="yyyy-MM-dd"
                       @change="resumeJudge(index)"
-                      :picker-options="pickerOptions0"
                       placeholder="请选择">
                     </el-date-picker>
                     <input class="fl" type="text" placeholder="工作/学习单位及职务/所学专业" v-model="item.inputText" @blur="resumeJudge(index)">
@@ -334,13 +331,14 @@
 
 <script>
   import Header from '@/components/header.vue'
-  import { getUserId } from '@/utils/auth'
+  import { getUserId,removeUserId } from '@/utils/auth'
   import {saveTeacherInfo,saveSocialResume,applyTeacher,queryRecruitmentSchool,queryRecruitmentJob,avatar} from '@/api/startSignUp.js'
   import {recruitmentById} from '@/api/detail.js'
   import {startApplyOrQuery} from '@/api/agreement.js'
-  import {validateEmpty,validateName,validatePhoneNumber,validateEmail,IdentityCodeValid,validateNation,validateEmpty2} from '@/utils/index.js'
+  import {validateEmpty,validateName,validatePhoneNumber,validateEmail,IdentityCodeValid,validateNation,validateEmpty2,validateEmptyx} from '@/utils/index.js'
   import FileUpload from "vue-upload-component"
   import vueCropper from "@/components/vue-cropper/vue-cropper.vue"
+  import commen from '@/settings.js'
   export default {
     data() {
         return {
@@ -1454,6 +1452,17 @@
             }
           })
         }
+        if(!validateEmptyx(this.userData) || !validateEmptyx(this.userData.uuid)){
+          this.$message({
+            message: '请先登录',
+            type: 'error'
+          });
+          removeUserId();
+          setTimeout(function () {
+            this.$router.push({path:'/'})
+          },2000)
+          postData = false;
+        }
         if(postData){
           this.btn1NOclick = true;
           var data = {
@@ -1673,6 +1682,18 @@
               return false
             }
           }
+        }
+        if(!validateEmptyx(this.userData) || !validateEmptyx(this.userData.uuid)){
+          this.$message({
+            message: '请先登录',
+            type: 'error'
+          });
+          removeUserId();
+          setTimeout(function () {
+            this.$router.push({path:'/'})
+          },2000)
+          savepd = false;
+          return false
         }
         if(savepd){
           this.btn2NOclick = true;
